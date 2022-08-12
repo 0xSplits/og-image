@@ -205,6 +205,8 @@ const App = (_: any, state: AppState, setState: SetState) => {
     url.searchParams.append('theme', theme);
     url.searchParams.append('md', mdValue);
     url.searchParams.append('fontSize', fontSize);
+    url.searchParams.append('splitId', '0xF8843981e7846945960f53243cA2Fd42a579f719');
+    url.searchParams.append('chainId', '1');
     for (let image of images) {
         url.searchParams.append('images', image);
     }

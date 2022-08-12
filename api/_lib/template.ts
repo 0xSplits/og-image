@@ -1,26 +1,14 @@
 
 import { readFileSync } from 'fs';
-import { marked } from 'marked';
-import { sanitizeHtml } from './sanitizer';
-import { ParsedRequest } from './types';
-const twemoji = require('twemoji');
-const twOptions = { folder: 'svg', ext: '.svg' };
-const emojify = (text: string) => twemoji.parse(text, twOptions);
+import type { SplitRecipient } from '@0xsplits/splits-sdk';
+
+import { shortenAddress } from './utils';
 
 const rglr = readFileSync(`${__dirname}/../_fonts/Inter-Regular.woff2`).toString('base64');
 const bold = readFileSync(`${__dirname}/../_fonts/Inter-Bold.woff2`).toString('base64');
 const mono = readFileSync(`${__dirname}/../_fonts/Vera-Mono.woff2`).toString('base64');
 
-function getCss(theme: string, fontSize: string) {
-    let background = 'white';
-    let foreground = 'black';
-    let radial = 'lightgray';
-
-    if (theme === 'dark') {
-        background = 'black';
-        foreground = 'white';
-        radial = 'dimgray';
-    }
+function getCss() {
     return `
     @font-face {
         font-family: 'Inter';
@@ -44,8 +32,8 @@ function getCss(theme: string, fontSize: string) {
       }
 
     body {
-        background: ${background};
-        background-image: radial-gradient(circle at 25px 25px, ${radial} 2%, transparent 0%), radial-gradient(circle at 75px 75px, ${radial} 2%, transparent 0%);
+        background: white;
+        background-image: radial-gradient(circle at 25px 25px, lightgray 2%, transparent 0%), radial-gradient(circle at 75px 75px, lightgray 2%, transparent 0%);
         background-size: 100px 100px;
         height: 100vh;
         display: flex;
@@ -73,10 +61,6 @@ function getCss(theme: string, fontSize: string) {
         justify-items: center;
     }
 
-    .logo {
-        margin: 0 75px;
-    }
-
     .plus {
         color: #BBB;
         font-family: Times New Roman, Verdana;
@@ -96,51 +80,125 @@ function getCss(theme: string, fontSize: string) {
     
     .heading {
         font-family: 'Inter', sans-serif;
-        font-size: ${sanitizeHtml(fontSize)};
+        font-size: '100px';
         font-style: normal;
-        color: ${foreground};
+        color: black;
         line-height: 1.8;
-    }`;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .title-bar {
+        text-align: left;
+    }
+
+    .logo {
+        margin-left: 30px;
+    }
+
+    .recipients-section {
+        margin-top: 10px;
+    }
+
+    .recipient-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .recipient-container > .address {
+        display: flex;
+    }
+
+    .recipient-container > .percent {
+        display: flex;
+    }
+
+    .percent-bar {
+        display: flex;
+        width: 100px;
+        margin-right: 5px;
+        border: solid black 1px;
+        border-radius: 4px;
+    }
+
+    .percent-bar > .filled-in {
+        background-color: blue;
+    }
+
+    .percent-bar > .empty {
+        background-color: grey;
+    }
+    `;
 }
 
-export function getHtml(parsedReq: ParsedRequest) {
-    const { text, theme, md, fontSize, images, widths, heights } = parsedReq;
+export function getHtml(splitId: string, recipients: SplitRecipient[]) {
     return `<!DOCTYPE html>
 <html>
     <meta charset="utf-8">
-    <title>Generated Image</title>
+    <title>Split Image</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        ${getCss(theme, fontSize)}
+        ${getCss()}
     </style>
     <body>
         <div>
-            <div class="spacer">
-            <div class="logo-wrapper">
-                ${images.map((img, i) =>
-                    getPlusSign(i) + getImage(img, widths[i], heights[i])
-                ).join('')}
+            <div class="header">
+                <div class="title-bar">
+                    <div>Split Contract</div>
+                    <div>${splitId}</div>
+                </div>
+                <div>
+                    <img class="logo" alt="Splits Logo" src="https://www.0xsplits.com/logo_light.svg" width="30" height="30" />
+                </div>
             </div>
-            <div class="spacer">
-            <div class="heading">${emojify(
-                md ? marked(text) : sanitizeHtml(text)
-            )}
+            <div class="recipients-section">
+                <div>${recipients.length} Recipients</div>
+                ${getRecipients(recipients.slice(0, 6))}
             </div>
         </div>
     </body>
 </html>`;
 }
 
-function getImage(src: string, width ='auto', height = '225') {
-    return `<img
-        class="logo"
-        alt="Generated Image"
-        src="${sanitizeHtml(src)}"
-        width="${sanitizeHtml(width)}"
-        height="${sanitizeHtml(height)}"
-    />`
+function getRecipients(recipients: SplitRecipient[]) {
+    let recipientDivs = ''
+
+    recipients.map((recipient) => {
+        const recipientHtml = getRecipientRow(recipient.address, recipient.percentAllocation)
+        recipientDivs += recipientHtml
+    })
+
+    return recipientDivs
 }
 
-function getPlusSign(i: number) {
-    return i === 0 ? '' : '<div class="plus">+</div>';
+function getRecipientRow(address: string, percentAllocation: number) {
+    const icon = 'icon'
+
+    return `
+        <div class="recipient-container">
+            <div class="address">
+                <div>${icon}</div>
+                <div>${shortenAddress(address)}</div>
+            </div>
+            <div class="percent">
+                ${getPercentBar(percentAllocation)}
+                <div>${percentAllocation}%</div>
+            </div>
+        </div>
+    `
+}
+
+function getPercentBar(percentAllocation: number) {
+    // Always set it to at least 1
+    const barPercent = Math.max(1, Math.round(percentAllocation))
+
+    return `
+        <div class="percent-bar">
+            <div class="filled-in" style="width:${barPercent}px"></div>
+            <div class="empty" style="width:${100-barPercent}px"></div>
+        </div>
+    `
 }

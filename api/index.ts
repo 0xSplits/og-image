@@ -1,4 +1,5 @@
 import { IncomingMessage, ServerResponse } from 'http';
+import { SplitsClient } from '@0xsplits/splits-sdk'
 import { parseRequest } from './_lib/parser';
 import { getScreenshot } from './_lib/chromium';
 import { getHtml } from './_lib/template';
@@ -9,7 +10,13 @@ const isHtmlDebug = process.env.OG_HTML_DEBUG === '1';
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
     try {
         const parsedReq = parseRequest(req);
-        const html = getHtml(parsedReq);
+        
+        const splitsClient = new SplitsClient({
+            chainId: parsedReq.chainId,
+        })
+        const split = await splitsClient.getSplitMetadata({ splitId: parsedReq.splitId })
+        
+        const html = getHtml(split.id, split.recipients);
         if (isHtmlDebug) {
             res.setHeader('Content-Type', 'text/html');
             res.end(html);
