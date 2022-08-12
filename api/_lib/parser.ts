@@ -11,20 +11,13 @@ export function parseRequest(req: IncomingMessage) {
         throw new Error('Expected a single chain')
     }
     
-    const arr = (pathname || '/').slice(1).split('.');
-    let extension = '';
-    let splitId = '';
-    if (arr.length === 0) {
+    const splitId = (pathname || '/').slice(1);
+    if (!splitId) {
         throw new Error('Split id required')
-    } else if (arr.length === 1) {
-        splitId = arr[0];
-    } else {
-        extension = arr.pop() as string;
-        splitId = arr.join('.');
     }
 
     const parsedRequest: ParsedRequest = {
-        fileType: extension === 'jpeg' ? extension : 'png',
+        fileType: 'png',
         text: '',
         // theme: theme === 'dark' ? 'dark' : 'light',
         theme: 'light',

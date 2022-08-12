@@ -17,7 +17,7 @@ The template is generated in `/_lib/template.ts`. Any html/css changes should be
 ## Testing
 The easiest way to test locally is to set an environment variable, `OG_HTML_DEBUG` to 1. You can also find the if 
 statement using that in `/api/index.ts` and just set it to `if (true) {`. Then once the server is running, go to
-http://localhost:3000/0xF8843981e7846945960f53243cA2Fd42a579f719.png?chainId=1 to view the image. You can swap in any split id. If
+http://localhost:3000/0xF8843981e7846945960f53243cA2Fd42a579f719?chainId=1 to view the image. You can swap in any split id. If
 you are testing on a chain other than mainnet, be sure to set the appropriate chain id (it will default to mainnet if not included).
 
 
