@@ -7,6 +7,7 @@ import { shortenAddress } from './utils';
 const rglr = readFileSync(`${__dirname}/../_fonts/Inter-Regular.woff2`).toString('base64');
 const bold = readFileSync(`${__dirname}/../_fonts/Inter-Bold.woff2`).toString('base64');
 const mono = readFileSync(`${__dirname}/../_fonts/Vera-Mono.woff2`).toString('base64');
+const tailwindCss = readFileSync(`${__dirname}/../_stylesheets/style.css`).toString();
 
 function getCss() {
     return `
@@ -141,6 +142,7 @@ export function getHtml(splitId: string, recipients: SplitRecipient[]) {
     <title>Split Image</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
+        ${tailwindCss}
         ${getCss()}
     </style>
     <body>

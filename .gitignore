@@ -4,3 +4,5 @@ node_modules
 api/dist
 public/dist
 
+# Generated styles
+api/_stylesheets/style.css

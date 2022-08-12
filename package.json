@@ -4,7 +4,8 @@
     "node": "14.x"
   },
   "scripts": {
-    "build": "tsc -p web/tsconfig.json"
+    "build:css": "postcss api/_stylesheets/tailwind.css -o api/_stylesheets/style.css",
+    "build": "yarn build:css & tsc -p web/tsconfig.json"
   },
   "dependencies": {
     "@0xsplits/splits-sdk": "2.0.0-beta.5",
@@ -17,6 +18,9 @@
     "@types/marked": "4.0.1",
     "@types/puppeteer": "5.4.4",
     "@types/puppeteer-core": "5.4.0",
+    "postcss": "8.4.16",
+    "postcss-cli": "10.0.0",
+    "tailwindcss": "3.1.8",
     "typescript": "4.1.5"
   }
 }
