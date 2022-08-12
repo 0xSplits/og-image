@@ -8,8 +8,9 @@
     "build": "yarn build:css & tsc -p web/tsconfig.json"
   },
   "dependencies": {
-    "@0xsplits/splits-sdk": "2.0.0-beta.5",
+    "@0xsplits/splits-sdk": "2.0.0-beta.6",
     "chrome-aws-lambda": "7.0.0",
+    "ethers": "5.6.9",
     "marked": "4.0.10",
     "puppeteer-core": "13.1.2",
     "twemoji": "13.0.1"

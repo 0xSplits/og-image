@@ -7,3 +7,6 @@ yarn-error.log
 
 # Generated styles
 api/_stylesheets/style.css
+
+# local env files
+.env.local

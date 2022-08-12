@@ -8,6 +8,8 @@ npm install -g vercel
 vercel dev
 ```
 
+Create a .env.local file and fill it in with the appropriate values.
+
 If you are having trouble check out [instructions](https://github.com/vercel/og-image/blob/main/CONTRIBUTING.md) in the original repo.
 
 ## Editing images

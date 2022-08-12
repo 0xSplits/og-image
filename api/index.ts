@@ -1,11 +1,14 @@
 import { IncomingMessage, ServerResponse } from 'http';
-import { SplitsClient } from '@0xsplits/splits-sdk'
+import { SplitsClient } from '@0xsplits/splits-sdk';
+import { AlchemyProvider } from '@ethersproject/providers';
+
 import { parseRequest } from './_lib/parser';
 import { getScreenshot } from './_lib/chromium';
 import { getHtml } from './_lib/template';
 
 const isDev = !process.env.AWS_REGION;
 const isHtmlDebug = process.env.OG_HTML_DEBUG === '1';
+const ensProvider = new AlchemyProvider(undefined, process.env.ALCHEMY_API_KEY);
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
     try {
@@ -13,6 +16,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         
         const splitsClient = new SplitsClient({
             chainId: parsedReq.chainId,
+            provider: ensProvider,
+            includeEnsNames: true,
         })
         const split = await splitsClient.getSplitMetadata({ splitId: parsedReq.splitId })
         if (!split) throw new Error('Split not found');

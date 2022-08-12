@@ -2,7 +2,7 @@
 import { readFileSync } from 'fs';
 import type { SplitRecipient } from '@0xsplits/splits-sdk';
 
-import { shortenAddress } from './utils';
+import { shortenAddress, shortenEns } from './utils';
 
 const customCss = readFileSync(`${__dirname}/../_stylesheets/custom.css`).toString();
 const tailwindCss = readFileSync(`${__dirname}/../_stylesheets/style.css`).toString();
@@ -46,20 +46,21 @@ function getRecipients(recipients: SplitRecipient[]) {
     let recipientDivs = ''
 
     recipients.map((recipient) => {
-        const recipientHtml = getRecipientRow(recipient.address, recipient.percentAllocation)
+        const recipientHtml = getRecipientRow(recipient)
         recipientDivs += recipientHtml
     })
 
     return recipientDivs
 }
 
-function getRecipientRow(address: string, percentAllocation: number) {
+function getRecipientRow(recipient: SplitRecipient) {
+    const name = recipient.ensName ? shortenEns(recipient.ensName) : shortenAddress(recipient.address)
     return `
         <div class="py-1 flex items-center justify-between">
-            <div>${shortenAddress(address)}</div>
+            <div>${name}</div>
             <div class="flex items-center space-x-4">
-                <div>${getPercentBar(percentAllocation)}</div>
-                <div class="w-40 text-5xl">${percentAllocation.toFixed(2)}<span class="text-gray-400">%</span></div>
+                <div>${getPercentBar(recipient.percentAllocation)}</div>
+                <div class="w-40 text-5xl">${recipient.percentAllocation.toFixed(2)}<span class="text-gray-400">%</span></div>
             </div>
         </div>
     `
