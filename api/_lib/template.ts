@@ -18,21 +18,19 @@ export function getHtml(splitId: string, recipients: SplitRecipient[]) {
         ${customCss}
     </style>
     <body>
-        <div>
-            <div class="header">
-                <div class="title-bar">
-                    <div>Split Contract</div>
+        <div class="pt-40 px-40 text-6xl space-y-20">
+            <div class="flex items-start justify-between">
+                <div class="space-y-8">
+                    <div class="text-gray-400 text-5xl">Split Contract</div>
                     <div>${splitId}</div>
                 </div>
-                <div>
-                    <img class="logo" alt="Splits Logo" src="https://www.0xsplits.com/logo_light.svg" width="30" height="30" />
-                </div>
             </div>
-            <div class="recipients-section">
-                <div>${recipients.length} Recipients</div>
-                ${getRecipients(recipients.slice(0, 6))}
+            <div class="space-y-8">
+                <div class="text-gray-400 text-5xl">Split Recipients (${recipients.length})</div>
+                ${getRecipients(recipients.slice(0, 7))}
             </div>
         </div>
+        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-gray-300 h-24"></div>
     </body>
 </html>`;
 }
@@ -49,17 +47,12 @@ function getRecipients(recipients: SplitRecipient[]) {
 }
 
 function getRecipientRow(address: string, percentAllocation: number) {
-    const icon = 'icon'
-
     return `
-        <div class="recipient-container">
-            <div class="address">
-                <div>${icon}</div>
-                <div>${shortenAddress(address)}</div>
-            </div>
-            <div class="percent">
-                ${getPercentBar(percentAllocation)}
-                <div>${percentAllocation}%</div>
+        <div class="py-1 flex items-center justify-between">
+            <div>${shortenAddress(address)}</div>
+            <div class="flex items-center space-x-4">
+                <div>${getPercentBar(percentAllocation)}</div>
+                <div class="w-32 text-5xl">${percentAllocation.toFixed(2)}%</div>
             </div>
         </div>
     `
@@ -70,9 +63,9 @@ function getPercentBar(percentAllocation: number) {
     const barPercent = Math.max(1, Math.round(percentAllocation))
 
     return `
-        <div class="percent-bar">
-            <div class="filled-in" style="width:${barPercent}px"></div>
-            <div class="empty" style="width:${100-barPercent}px"></div>
+        <div class="flex w-80 h-8 rounded-xl overflow-hidden">
+            <div class="bg-blue-400 h-full" style="width:${barPercent}%"></div>
+            <div class="bg-gray-200 h-full" style="width:${100-barPercent}%"></div>
         </div>
     `
 }
