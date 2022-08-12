@@ -15,6 +15,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
             chainId: parsedReq.chainId,
         })
         const split = await splitsClient.getSplitMetadata({ splitId: parsedReq.splitId })
+        if (!split) throw new Error('Split not found');
         
         const html = getHtml(split.id, split.recipients);
         if (isHtmlDebug) {
