@@ -22,7 +22,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         const split = await splitsClient.getSplitMetadata({ splitId: parsedReq.splitId })
         if (!split) throw new Error('Split not found');
         
-        const html = getHtml(split.id, split.recipients);
+        const html = getHtml(split.recipients);
         if (isHtmlDebug) {
             res.setHeader('Content-Type', 'text/html');
             res.end(html);
