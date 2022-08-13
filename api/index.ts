@@ -1,5 +1,6 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { SplitsClient } from '@0xsplits/splits-sdk';
+import { AddressZero } from '@ethersproject/constants'
 import { AlchemyProvider } from '@ethersproject/providers';
 
 import { parseRequest } from './_lib/parser';
@@ -9,6 +10,9 @@ import { getHtml } from './_lib/template';
 const isDev = !process.env.AWS_REGION;
 const isHtmlDebug = process.env.OG_HTML_DEBUG === '1';
 const ensProvider = new AlchemyProvider(undefined, process.env.ALCHEMY_API_KEY);
+
+const CACHE_TIME_IMMUTABLE_SEC = 60 * 60 * 24 * 7 // 1 week
+const CACHE_TIME_MUTABLE_SEC = 60 * 60 // 1 hour
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
     try {
@@ -21,6 +25,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         })
         const split = await splitsClient.getSplitMetadata({ splitId: parsedReq.splitId })
         if (!split) throw new Error('Split not found');
+        const cacheMaxAge = (!split.controller || split.controller === AddressZero) ? CACHE_TIME_IMMUTABLE_SEC : CACHE_TIME_MUTABLE_SEC
         
         const html = getHtml(split.recipients);
         if (isHtmlDebug) {
@@ -32,7 +37,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         const file = await getScreenshot(html, fileType, isDev);
         res.statusCode = 200;
         res.setHeader('Content-Type', `image/${fileType}`);
-        res.setHeader('Cache-Control', `public, immutable, no-transform, s-maxage=31536000, max-age=31536000`);
+        res.setHeader('Cache-Control', `public, immutable, no-transform, s-maxage=${cacheMaxAge}, max-age=${cacheMaxAge}`);
         res.end(file);
     } catch (e) {
         res.statusCode = 500;
