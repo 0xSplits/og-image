@@ -8,22 +8,22 @@ const customCss = readFileSync(`${__dirname}/../_stylesheets/custom.css`).toStri
 const tailwindCss = readFileSync(`${__dirname}/../_stylesheets/style.css`).toString();
 
 const DOUGHNUT_BACKGROUND_COLORS = [
-    "'#FF0C00'",
-    "'#FFAE00'",
-    "'#F7FF00'",
-    "'#36FF00'",
-    "'#00E8FF'",
-    "'#0C00FF'",
-    "'#7C00FF'",
-    "'#FF00E8'",
+    "'#34778C'",
+    "'#EC9736'",
+    "'#3C7FEA'",
+    "'#E75928'",
+    "'#58BCED'",
+    "'#1E495C'",
+    "'#E73956'",
+    "'#3E8C7E'",
 ]
 
 export function getHtml(recipients: SplitRecipient[]) {
-    const displayRecipients = recipients.slice(0, recipients.length === 7 ? 7 : 6)
-    const extraTextHtml = recipients.length > 7 ? `<div class="text-center"> + ${recipients.length-6} more </div>` : ''
+    const displayRecipients = recipients.slice(0, recipients.length === 6 ? 6 : 5)
+    const extraTextHtml = recipients.length > 6 ? `<div class="text-gray-400"> + ${recipients.length-5} more </div>` : ''
 
     let doughnutData = displayRecipients.map((recipient) => recipient.percentAllocation)
-    if (recipients.length > 7) {
+    if (recipients.length > 6) {
         const displayRecipientsTotalAllocation = displayRecipients.reduce((acc, recipient) => {
             return acc + recipient.percentAllocation
         }, 0)
@@ -40,18 +40,19 @@ export function getHtml(recipients: SplitRecipient[]) {
         ${customCss}
     </style>
     <body>
-        <div class="h-full flex">
-            <div class="py-32 pl-32 flex flex-col">
-                <div>
-                    <img class="w-64 h-64" src="https://www.0xsplits.xyz/logo_light.svg" />
-                </div>
-                <canvas class="p-10" id="chartDoughnut"></canvas>
-            </div>
-            <div class="flex-grow pt-32 px-32 relative">
-                <div class="space-y-14">
+        <div class="h-full flex flex-col relative">
+            <div class="flex-grow py-32 px-32 flex items-center space-x-12">
+                <div class="w-3/5 flex-grow space-y-8 overflow-x-hidden">
                     ${getRecipients(displayRecipients)}
                     ${extraTextHtml}
                 </div>
+                <div class="w-2/5">
+                    <canvas class="w-full h-full" id="chartDoughnut"></canvas>
+                </div>
+            </div>
+            <div class="w-full px-12 py-10 bg-black flex items-center space-x-6 text-7xl text-white">
+                <img class="w-24 h-24" src="https://www.0xsplits.xyz/logo_dark.svg" />
+                <div>0xSplits</div>
             </div>
         </div>
     </body>
@@ -72,6 +73,9 @@ export function getHtml(recipients: SplitRecipient[]) {
             options: {
                 animation: false,
                 events: [],
+                borderRadius: 12,
+                borderWidth: 6,
+                cutout: "56%",
             },
         };
         
@@ -97,21 +101,6 @@ function getRecipients(recipients: SplitRecipient[]) {
 function getRecipientRow(recipient: SplitRecipient) {
     const name = recipient.ensName ? shortenEns(recipient.ensName) : shortenAddress(recipient.address)
     return `
-        <div class="py-1 flex items-center justify-between">
-            <div class="font-tabular">${name}</div>
-            <div>${getPercentBar(recipient.percentAllocation)}</div>
-        </div>
-    `
-}
-
-function getPercentBar(percentAllocation: number) {
-    // Always set it to at least 1
-    const barPercent = Math.max(1, Math.round(percentAllocation))
-
-    return `
-        <div class="flex w-[500px] h-8 rounded-full overflow-hidden">
-            <div class="bg-blue-400 h-full" style="width:${barPercent}%"></div>
-            <div class="bg-gray-200 h-full" style="width:${100-barPercent}%"></div>
-        </div>
+        <div>${name}</div>
     `
 }
