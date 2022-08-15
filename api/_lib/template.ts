@@ -7,7 +7,29 @@ import { shortenAddress, shortenEns } from './utils';
 const customCss = readFileSync(`${__dirname}/../_stylesheets/custom.css`).toString();
 const tailwindCss = readFileSync(`${__dirname}/../_stylesheets/style.css`).toString();
 
+const DOUGHNUT_BACKGROUND_COLORS = [
+    "'#FF0C00'",
+    "'#FFAE00'",
+    "'#F7FF00'",
+    "'#36FF00'",
+    "'#00E8FF'",
+    "'#0C00FF'",
+    "'#7C00FF'",
+    "'#FF00E8'",
+]
+
 export function getHtml(recipients: SplitRecipient[]) {
+    const displayRecipients = recipients.slice(0, recipients.length === 7 ? 7 : 6)
+    const extraTextHtml = recipients.length > 7 ? `<div class="text-center"> + ${recipients.length-6} more </div>` : ''
+
+    let doughnutData = displayRecipients.map((recipient) => recipient.percentAllocation)
+    if (recipients.length > 7) {
+        const displayRecipientsTotalAllocation = displayRecipients.reduce((acc, recipient) => {
+            return acc + recipient.percentAllocation
+        }, 0)
+        doughnutData = doughnutData.concat([100 - displayRecipientsTotalAllocation])
+    }
+
     return `<!DOCTYPE html>
 <html>
     <meta charset="utf-8">
@@ -23,15 +45,41 @@ export function getHtml(recipients: SplitRecipient[]) {
                 <div>
                     <img class="w-64 h-64" src="https://www.0xsplits.xyz/logo_light.svg" />
                 </div>
+                <canvas class="p-10" id="chartDoughnut"></canvas>
             </div>
             <div class="flex-grow pt-32 px-32 relative">
                 <div class="space-y-14">
-                    ${getRecipients(recipients.slice(0, recipients.length == 7 ? 7 : 6))}
-                    ${recipients.length > 7 ? `<div class="text-center"> + ${recipients.length-6} more </div>` : ``}
+                    ${getRecipients(displayRecipients)}
+                    ${extraTextHtml}
                 </div>
             </div>
         </div>
     </body>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const dataDoughnut = {
+            datasets: [
+                {
+                    data: [${doughnutData}],
+                    backgroundColor: [${DOUGHNUT_BACKGROUND_COLORS.slice(0, doughnutData.length)}]
+                },
+            ],
+        };
+    
+        const configDoughnut = {
+            type: "doughnut",
+            data: dataDoughnut,
+            options: {
+                animation: false,
+                events: [],
+            },
+        };
+        
+        const chartBar = new Chart(
+            document.getElementById("chartDoughnut"),
+            configDoughnut
+        );
+    </script>
 </html>`;
 }
 
