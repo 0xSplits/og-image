@@ -14,7 +14,10 @@ async function getPage(isDev: boolean) {
 }
 
 export async function getScreenshot(html: string, type: FileType, isDev: boolean) {
+    console.log('GETTING SCREENSHOT');
     const page = await getPage(isDev);
+    console.log(page)
+    console.log(html)
     await page.setViewport({ width: 2048, height: 1170 });
     await page.setContent(html);
     await new Promise(r => setTimeout(r, 5000)); // Sleep to allow chartjs to load
