@@ -19,13 +19,13 @@ const DOUGHNUT_BACKGROUND_COLORS = [
 ]
 
 const MAX_DISPLAY_RECIPIENTS = 6
+const MAX_EXTRA_DATA_POINTS = 100
 
 export function getHtml(recipients: SplitRecipient[]) {
     const displayRecipients = recipients.slice(0, recipients.length === MAX_DISPLAY_RECIPIENTS ? MAX_DISPLAY_RECIPIENTS : MAX_DISPLAY_RECIPIENTS - 1)
     const extraTextHtml = recipients.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-gray-400"> + ${recipients.length - MAX_DISPLAY_RECIPIENTS - 1} more </div>` : ''
 
     const doughnutData = recipients.slice(0, MAX_DISPLAY_RECIPIENTS + MAX_EXTRA_DATA_POINTS).map((recipient) => recipient.percentAllocation * 100)
-    }
 
     return `<!DOCTYPE html>
 <html>
