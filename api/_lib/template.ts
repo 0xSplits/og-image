@@ -8,14 +8,9 @@ const customCss = readFileSync(`${__dirname}/../_stylesheets/custom.css`).toStri
 const tailwindCss = readFileSync(`${__dirname}/../_stylesheets/style.css`).toString();
 
 const DOUGHNUT_BACKGROUND_COLORS = [
-    "'#34778C'",
-    "'#EC9736'",
-    "'#3C7FEA'",
-    "'#E75928'",
-    "'#58BCED'",
-    "'#1E495C'",
-    "'#E73956'",
-    "'#3E8C7E'",
+    "'#222222'",
+    "'#494949'",
+    "'#696969'",
 ]
 
 const MAX_DISPLAY_RECIPIENTS = 6
@@ -23,7 +18,7 @@ const MAX_EXTRA_DATA_POINTS = 100
 
 export function getHtml(recipients: SplitRecipient[]) {
     const displayRecipients = recipients.slice(0, recipients.length === MAX_DISPLAY_RECIPIENTS ? MAX_DISPLAY_RECIPIENTS : MAX_DISPLAY_RECIPIENTS - 1)
-    const extraTextHtml = recipients.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-gray-400"> + ${recipients.length - MAX_DISPLAY_RECIPIENTS - 1} more </div>` : ''
+    const extraTextHtml = recipients.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-[#696969]"> + ${recipients.length - MAX_DISPLAY_RECIPIENTS - 1} more </div>` : ''
 
     const doughnutData = recipients.slice(0, MAX_DISPLAY_RECIPIENTS + MAX_EXTRA_DATA_POINTS).map((recipient) => recipient.percentAllocation * 100)
 
@@ -47,7 +42,7 @@ export function getHtml(recipients: SplitRecipient[]) {
                     <canvas class="w-full h-full" id="chartDoughnut"></canvas>
                 </div>
             </div>
-            <div class="w-full px-12 py-10 bg-black flex items-center space-x-6 text-7xl text-white">
+            <div class="w-full px-12 py-10 bg-[#222222] flex items-center space-x-6 text-7xl text-white">
                 <img class="w-24 h-24" src="https://www.0xsplits.xyz/logo_dark.svg" />
                 <div>0xSplits</div>
             </div>
@@ -70,7 +65,7 @@ export function getHtml(recipients: SplitRecipient[]) {
             options: {
                 animation: false,
                 events: [],
-                borderRadius: 12,
+                borderRadius: 16,
                 borderWidth: 6,
                 cutout: "56%",
             },
