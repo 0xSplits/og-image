@@ -1,26 +1,28 @@
 
 import { readFileSync } from 'fs';
 import type { SplitRecipient } from '@0xsplits/splits-sdk';
+import { ethers } from 'ethers';
 
 import { shortenAddress, shortenEns } from './utils';
 
 const customCss = readFileSync(`${__dirname}/../_stylesheets/custom.css`).toString();
 const tailwindCss = readFileSync(`${__dirname}/../_stylesheets/style.css`).toString();
 
-const DOUGHNUT_BACKGROUND_COLORS = [
-    "'#222222'",
-    "'#494949'",
-    "'#696969'",
-]
-
 const MAX_DISPLAY_RECIPIENTS = 6
 const MAX_EXTRA_DATA_POINTS = 100
 
+function getHslColor(address: string) {
+    const hue = ethers.BigNumber.from(address).mod(360).toNumber()
+    return ("hsl(" + hue + ' 100% 64%)')
+}
+
 export function getHtml(recipients: SplitRecipient[]) {
     const displayRecipients = recipients.slice(0, recipients.length === MAX_DISPLAY_RECIPIENTS ? MAX_DISPLAY_RECIPIENTS : MAX_DISPLAY_RECIPIENTS - 1)
-    const extraTextHtml = recipients.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-[#696969]"> + ${recipients.length - MAX_DISPLAY_RECIPIENTS - 1} more </div>` : ''
+    const extraTextHtml = recipients.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-[#898989] text-7xl font-bold pl-20"> + ${recipients.length - MAX_DISPLAY_RECIPIENTS - 1} more</div>` : ''
+
 
     const doughnutData = recipients.slice(0, MAX_DISPLAY_RECIPIENTS + MAX_EXTRA_DATA_POINTS).map((recipient) => recipient.percentAllocation * 100)
+    const doughnutColors = recipients.slice(0, MAX_DISPLAY_RECIPIENTS + MAX_EXTRA_DATA_POINTS).map((recipient) => "'"  + getHslColor(recipient.address) + "'")
 
     return `<!DOCTYPE html>
 <html>
@@ -33,8 +35,8 @@ export function getHtml(recipients: SplitRecipient[]) {
     </style>
     <body>
         <div class="h-full flex flex-col relative">
-            <div class="flex-grow py-32 px-32 flex items-center space-x-12">
-                <div class="w-3/5 flex-grow space-y-8 overflow-x-hidden">
+            <div class="flex-grow py-32 px-32 flex items-center space-x-32">
+                <div class="w-3/5 flex-grow flex flex-col h-full justify-evenly overflow-x-hidden space-y-4">
                     ${getRecipients(displayRecipients)}
                     ${extraTextHtml}
                 </div>
@@ -54,7 +56,7 @@ export function getHtml(recipients: SplitRecipient[]) {
             datasets: [
                 {
                     data: [${doughnutData}],
-                    backgroundColor: [${DOUGHNUT_BACKGROUND_COLORS}]
+                    backgroundColor: [${doughnutColors}]
                 },
             ],
         };
@@ -65,9 +67,10 @@ export function getHtml(recipients: SplitRecipient[]) {
             options: {
                 animation: false,
                 events: [],
-                borderRadius: 16,
-                borderWidth: 6,
-                cutout: "56%",
+                borderWidth: 8,
+                borderRadius: 12,
+                cutout: "16%",
+                borderColor: "#FFFFFF",
             },
         };
         
@@ -93,6 +96,9 @@ function getRecipients(recipients: SplitRecipient[]) {
 function getRecipientRow(recipient: SplitRecipient) {
     const name = recipient.ensName ? shortenEns(recipient.ensName) : shortenAddress(recipient.address)
     return `
-        <div>${name}</div>
+        <div class="font-bold text-[#222222] flex items-center space-x-8">
+            <div class="w-12 h-12 rounded-full" style="background-color: ${getHslColor(recipient.address)}"></div>
+            <div>${name}</div>
+        </div>
     `
 }
