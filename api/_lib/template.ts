@@ -18,16 +18,13 @@ const DOUGHNUT_BACKGROUND_COLORS = [
     "'#3E8C7E'",
 ]
 
-export function getHtml(recipients: SplitRecipient[]) {
-    const displayRecipients = recipients.slice(0, recipients.length === 6 ? 6 : 5)
-    const extraTextHtml = recipients.length > 6 ? `<div class="text-gray-400"> + ${recipients.length-5} more </div>` : ''
+const MAX_DISPLAY_RECIPIENTS = 6
 
-    let doughnutData = displayRecipients.map((recipient) => recipient.percentAllocation)
-    if (recipients.length > 6) {
-        const displayRecipientsTotalAllocation = displayRecipients.reduce((acc, recipient) => {
-            return acc + recipient.percentAllocation
-        }, 0)
-        doughnutData = doughnutData.concat([100 - displayRecipientsTotalAllocation])
+export function getHtml(recipients: SplitRecipient[]) {
+    const displayRecipients = recipients.slice(0, recipients.length === MAX_DISPLAY_RECIPIENTS ? MAX_DISPLAY_RECIPIENTS : MAX_DISPLAY_RECIPIENTS - 1)
+    const extraTextHtml = recipients.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-gray-400"> + ${recipients.length - MAX_DISPLAY_RECIPIENTS - 1} more </div>` : ''
+
+    const doughnutData = recipients.slice(0, MAX_DISPLAY_RECIPIENTS + MAX_EXTRA_DATA_POINTS).map((recipient) => recipient.percentAllocation * 100)
     }
 
     return `<!DOCTYPE html>
@@ -62,7 +59,7 @@ export function getHtml(recipients: SplitRecipient[]) {
             datasets: [
                 {
                     data: [${doughnutData}],
-                    backgroundColor: [${DOUGHNUT_BACKGROUND_COLORS.slice(0, doughnutData.length)}]
+                    backgroundColor: [${DOUGHNUT_BACKGROUND_COLORS}]
                 },
             ],
         };
