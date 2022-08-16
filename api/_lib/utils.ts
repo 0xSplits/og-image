@@ -1,4 +1,4 @@
-const MAX_ENS_LENGTH = 20
+const MAX_ENS_LENGTH = 18
 
 export const shortenAddress = (address: string): string => {
   return `${address.slice(0, 6)}...${address.slice(-4)}`
