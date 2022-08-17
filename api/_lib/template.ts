@@ -19,7 +19,7 @@ function getHslColor(address: string, jump: number) {
 
 export function getHtml(splitId: string, recipients: SplitRecipient[]) {
     const displayRecipients = recipients.slice(0, recipients.length === MAX_DISPLAY_RECIPIENTS ? MAX_DISPLAY_RECIPIENTS : MAX_DISPLAY_RECIPIENTS - 1)
-    const extraTextHtml = recipients.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-[#898989] text-7xl"> + ${recipients.length - MAX_DISPLAY_RECIPIENTS - 1} more</div>` : ''
+    const extraTextHtml = recipients.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-[#898989]"> + ${recipients.length - MAX_DISPLAY_RECIPIENTS - 1} more</div>` : ''
 
     const doughnutData = recipients.slice(0, MAX_DISPLAY_RECIPIENTS + MAX_EXTRA_DATA_POINTS).map((recipient) => recipient.percentAllocation * 100)
     const jumpMultiplier = 100 / doughnutData.length
@@ -37,18 +37,17 @@ export function getHtml(splitId: string, recipients: SplitRecipient[]) {
     </style>
     <body>
         <div class="h-full flex flex-col relative">
+            <div class="w-full pt-20 px-44 flex justify-end">
+                <img class="w-32 h-32" src="https://www.0xsplits.xyz/logo_light.svg" />
+            </div>
             <div class="flex-grow py-32 px-44 flex items-center space-x-32">
-                <div class="w-2/5">
+                <div class="w-1/3">
                     <canvas class="w-full h-full" id="chartDoughnut"></canvas>
                 </div>
-                <div class="w-3/5 flex-grow flex flex-col h-full justify-evenly overflow-x-hidden">
+                <div class="w-3/5 flex-grow flex flex-col h-full justify-evenly overflow-x-hidden space-y-4">
                     ${getRecipients(displayRecipients)}
                     ${extraTextHtml}
                 </div>
-            </div>
-            <div class="w-full px-12 py-10 bg-gray-200 flex items-center space-x-6 text-6xl text-[#222222]">
-                <img class="w-24 h-24" src="https://www.0xsplits.xyz/logo_light.svg" />
-                <div>0xSplits</div>
             </div>
         </div>
     </body>
