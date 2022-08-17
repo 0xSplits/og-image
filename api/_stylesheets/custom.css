@@ -5,4 +5,5 @@ body {
   font-family: 'Inter', 'Arial', 'Helvetica', sans-serif;
   font-size: 80px;
   line-height: 1;
+  font-feature-settings: 'tnum' 1, 'calt' 0, 'ss01' 1, 'ss02' 0;
 }
