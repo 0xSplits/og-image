@@ -40,7 +40,7 @@ export function getHtml(splitId: string, recipients: SplitRecipient[]) {
             <div class="w-full pt-32 px-44 flex justify-end">
                 <img class="w-40 h-40" src="https://www.0xsplits.xyz/logo_light.svg" />
             </div>
-            <div class="flex-grow pt-16 pb-32 px-44 flex items-center space-x-40">
+            <div class="flex-grow pt-20 pb-32 px-44 flex items-center space-x-40">
                 <div class="w-1/3">
                     <canvas class="w-full h-full" id="chartDoughnut"></canvas>
                 </div>
