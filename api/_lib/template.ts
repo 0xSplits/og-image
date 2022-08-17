@@ -7,9 +7,20 @@ import { shortenAddress, shortenEns } from './utils';
 
 const customCss = readFileSync(`${__dirname}/../_stylesheets/custom.css`).toString();
 const tailwindCss = readFileSync(`${__dirname}/../_stylesheets/style.css`).toString();
+const medium = readFileSync(`${__dirname}/../_fonts/Inter-Medium.woff2`).toString('base64');
 
 const MAX_DISPLAY_RECIPIENTS = 6
 const MAX_EXTRA_DATA_POINTS = 60
+
+function getCss() {
+    return `
+    @font-face {
+        font-family: 'Inter';
+        font-style:  normal;
+        font-weight: normal;
+        src: url(data:font/woff2;charset=utf-8;base64,${medium}) format('woff2');
+    }`
+}
 
 function getHslColor(address: string, jump: number) {
     const hue = ethers.BigNumber.from(address).mod(360).toNumber()
@@ -34,6 +45,7 @@ export function getHtml(splitId: string, recipients: SplitRecipient[]) {
     <style>
         ${tailwindCss}
         ${customCss}
+        ${getCss()}
     </style>
     <body>
         <div class="h-full flex flex-col relative">
