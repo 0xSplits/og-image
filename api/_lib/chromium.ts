@@ -4,9 +4,11 @@ import { FileType } from './types';
 let _page: core.Page | null;
 
 async function getPage(isDev: boolean) {
-    if (_page) {
-        return _page;
-    }
+    // This is causing an issue with chart.js. It's only working the first time with a fresh _page.
+    // Using the previously generated _page causes the chart to not display for some reason.
+    // if (_page) {
+    //     return _page;
+    // }
     const options = await getOptions(isDev);
     const browser = await core.launch(options);
     _page = await browser.newPage();
