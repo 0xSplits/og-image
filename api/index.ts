@@ -27,7 +27,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         if (!split) throw new Error('Split not found');
         const cacheMaxAge = (!split.controller || split.controller === AddressZero) ? CACHE_TIME_IMMUTABLE_SEC : CACHE_TIME_MUTABLE_SEC
         
-        const html = getHtml(split.recipients);
+        const html = getHtml(split.id, split.recipients);
         if (isHtmlDebug) {
             res.setHeader('Content-Type', 'text/html');
             res.end(html);

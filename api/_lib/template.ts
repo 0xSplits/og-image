@@ -11,17 +11,20 @@ const tailwindCss = readFileSync(`${__dirname}/../_stylesheets/style.css`).toStr
 const MAX_DISPLAY_RECIPIENTS = 6
 const MAX_EXTRA_DATA_POINTS = 60
 
-function getHslColor(address: string) {
+function getHslColor(address: string, jump: number) {
     const hue = ethers.BigNumber.from(address).mod(360).toNumber()
-    return ("hsl(" + hue + ", 80%, 64%)")
+    const jumpedAlpha = (99 - jump) % 100 / 100.0
+    return ("hsla(" + hue + ", 88%, 64%, " + jumpedAlpha + ")")
 }
 
-export function getHtml(recipients: SplitRecipient[]) {
+export function getHtml(splitId: string, recipients: SplitRecipient[]) {
     const displayRecipients = recipients.slice(0, recipients.length === MAX_DISPLAY_RECIPIENTS ? MAX_DISPLAY_RECIPIENTS : MAX_DISPLAY_RECIPIENTS - 1)
-    const extraTextHtml = recipients.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-[#898989] text-7xl pl-20"> + ${recipients.length - MAX_DISPLAY_RECIPIENTS - 1} more</div>` : ''
+    const extraTextHtml = recipients.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-[#898989] text-7xl"> + ${recipients.length - MAX_DISPLAY_RECIPIENTS - 1} more</div>` : ''
 
     const doughnutData = recipients.slice(0, MAX_DISPLAY_RECIPIENTS + MAX_EXTRA_DATA_POINTS).map((recipient) => recipient.percentAllocation * 100)
-    const doughnutColors = recipients.slice(0, MAX_DISPLAY_RECIPIENTS + MAX_EXTRA_DATA_POINTS).map((recipient) => "'"  + getHslColor(recipient.address) + "'")
+    const jumpMultiplier = 100 / doughnutData.length
+    const doughnutColors = recipients.slice(0, MAX_DISPLAY_RECIPIENTS + MAX_EXTRA_DATA_POINTS).map((_recipient, index) => "'"  + getHslColor(splitId, index * jumpMultiplier) + "'")
+
 
     return `<!DOCTYPE html>
 <html>
@@ -34,12 +37,12 @@ export function getHtml(recipients: SplitRecipient[]) {
     </style>
     <body>
         <div class="h-full flex flex-col relative">
-            <div class="flex-grow py-32 px-48 flex items-center space-x-32">
+            <div class="flex-grow py-32 px-40 flex items-center space-x-32">
                 <div class="w-2/5">
                     <canvas class="w-full h-full" id="chartDoughnut"></canvas>
                 </div>
                 <div class="w-3/5 flex-grow flex flex-col h-full justify-evenly overflow-x-hidden space-y-8">
-                    ${getRecipients(displayRecipients, doughnutColors.slice(0, displayRecipients.length))}
+                    ${getRecipients(displayRecipients)}
                     ${extraTextHtml}
                 </div>
             </div>
@@ -66,9 +69,9 @@ export function getHtml(recipients: SplitRecipient[]) {
             options: {
                 animation: false,
                 events: [],
-                borderWidth: 6,
-                borderRadius: 12,
-                cutout: "16%",
+                borderWidth: 8,
+                borderRadius: 0,
+                cutout: "56%",
                 borderColor: "#FFFFFF",
             },
         };
@@ -81,23 +84,24 @@ export function getHtml(recipients: SplitRecipient[]) {
 </html>`;
 }
 
-function getRecipients(recipients: SplitRecipient[], colors: string[]) {
+function getRecipients(recipients: SplitRecipient[]) {
     let recipientDivs = ''
 
-    recipients.map((recipient, index) => {
-        const recipientHtml = getRecipientRow(recipient, colors[index])
+    recipients.map((recipient) => {
+        const recipientHtml = getRecipientRow(recipient)
         recipientDivs += recipientHtml
     })
 
     return recipientDivs
 }
 
-function getRecipientRow(recipient: SplitRecipient, color: string) {
+function getRecipientRow(recipient: SplitRecipient) {
     const name = recipient.ensName ? shortenEns(recipient.ensName) : shortenAddress(recipient.address)
     return `
-        <div class="text-[#222222] flex items-center space-x-8">
-            <div class="flex-shrink-0 w-12 h-12 rounded-full" style="background-color: ${color.slice(1, -1)}"></div>
+        <div class="text-[#222222] flex items-bottom justify-between space-x-4">
             <div>${name}</div>
+            <div class="flex-grow border-b-8 mb-3 border-dotted border-gray-200"></div>
+            <div class="text-[#898989]">${recipient.percentAllocation.toFixed(0)}%</div>
         </div>
     `
 }
