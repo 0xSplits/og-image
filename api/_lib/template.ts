@@ -37,7 +37,7 @@ export function getHtml(splitId: string, recipients: SplitRecipient[]) {
     </style>
     <body>
         <div class="h-full flex flex-col relative">
-            <div class="flex-grow py-40 px-40 flex items-center space-x-32">
+            <div class="flex-grow py-32 px-44 flex items-center space-x-32">
                 <div class="w-2/5">
                     <canvas class="w-full h-full" id="chartDoughnut"></canvas>
                 </div>
@@ -46,8 +46,8 @@ export function getHtml(splitId: string, recipients: SplitRecipient[]) {
                     ${extraTextHtml}
                 </div>
             </div>
-            <div class="w-full px-12 py-10 bg-[#222222] flex items-center space-x-6 text-7xl text-white">
-                <img class="w-24 h-24" src="https://www.0xsplits.xyz/logo_dark.svg" />
+            <div class="w-full px-12 py-10 bg-gray-200 flex items-center space-x-6 text-6xl text-[#222222]">
+                <img class="w-24 h-24" src="https://www.0xsplits.xyz/logo_light.svg" />
                 <div>0xSplits</div>
             </div>
         </div>
