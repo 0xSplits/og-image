@@ -5,10 +5,13 @@ import { ParsedRequest } from './types';
 export function parseRequest(req: IncomingMessage) {
     console.log('HTTP ' + req.url);
     const { pathname, query } = parse(req.url || '/', true);
-    const { chainId } = (query || {});
+    const { chainId, viewportWidth, viewportHeight } = (query || {});
 
     if (Array.isArray(chainId)) {
         throw new Error('Expected a single chain')
+    }
+    if (Array.isArray(viewportWidth) || Array.isArray(viewportHeight)) {
+        throw new Error('Expected a single height and width')
     }
     
     const splitId = (pathname || '/').slice(1);
@@ -29,6 +32,8 @@ export function parseRequest(req: IncomingMessage) {
         heights: [],
         chainId: chainId ? parseInt(chainId) : 1,
         splitId,
+        viewportWidth: viewportWidth ? parseInt(viewportWidth) : 2400,
+        viewportHeight: viewportHeight ? parseInt(viewportHeight) : 1254,
     };
     // parsedRequest.images = getDefaultImages(parsedRequest.images, parsedRequest.theme);
     return parsedRequest;
