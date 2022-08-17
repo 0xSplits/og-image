@@ -37,11 +37,11 @@ export function getHtml(splitId: string, recipients: SplitRecipient[]) {
     </style>
     <body>
         <div class="h-full flex flex-col relative">
-            <div class="flex-grow py-32 px-40 flex items-center space-x-32">
+            <div class="flex-grow py-40 px-40 flex items-center space-x-32">
                 <div class="w-2/5">
                     <canvas class="w-full h-full" id="chartDoughnut"></canvas>
                 </div>
-                <div class="w-3/5 flex-grow flex flex-col h-full justify-evenly overflow-x-hidden space-y-8">
+                <div class="w-3/5 flex-grow flex flex-col h-full justify-evenly overflow-x-hidden">
                     ${getRecipients(displayRecipients)}
                     ${extraTextHtml}
                 </div>
