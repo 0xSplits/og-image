@@ -3,7 +3,7 @@ import { readFileSync } from 'fs';
 import type { SplitRecipient } from '@0xsplits/splits-sdk';
 import { ethers } from 'ethers';
 
-import { shortenAddress, shortenEns } from './utils';
+import { MANUAL_SPLIT_NAMING_MAP, shortenAddress, shortenEns } from './utils';
 
 const customCss = readFileSync(`${__dirname}/../_stylesheets/custom.css`).toString();
 const tailwindCss = readFileSync(`${__dirname}/../_stylesheets/style.css`).toString();
@@ -107,7 +107,12 @@ function getRecipients(recipients: SplitRecipient[]) {
 }
 
 function getRecipientRow(recipient: SplitRecipient) {
-    const name = recipient.ensName ? shortenEns(recipient.ensName) : shortenAddress(recipient.address)
+    const manualEnsName = MANUAL_SPLIT_NAMING_MAP[recipient.address]
+    const name = recipient.ensName ?
+        shortenEns(recipient.ensName)
+        : manualEnsName ?
+            shortenEns(manualEnsName)
+            : shortenAddress(recipient.address)
     return `
         <div class="text-[#222222] flex items-bottom justify-between space-x-4">
             <div>${name}</div>
