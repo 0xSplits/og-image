@@ -8,7 +8,7 @@
     "build": "yarn build:css & tsc -p web/tsconfig.json"
   },
   "dependencies": {
-    "@0xsplits/splits-sdk": "2.0.0-beta.6",
+    "@0xsplits/splits-sdk": "2.0.3",
     "chrome-aws-lambda": "7.0.0",
     "ethers": "5.6.9",
     "marked": "4.0.10",
