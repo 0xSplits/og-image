@@ -1,6 +1,6 @@
 
 import { readFileSync } from 'fs';
-import type { SplitRecipient } from '@0xsplits/splits-sdk';
+import type { SplitRecipient, WaterfallTranche } from '@0xsplits/splits-sdk';
 import { ethers } from 'ethers';
 
 import { MANUAL_SPLIT_NAMING_MAP, shortenAddress, shortenEns } from './utils';
@@ -28,7 +28,71 @@ function getHslColor(address: string, jump: number) {
     return ("hsla(" + hue + ", 88%, 56%, " + jumpedAlpha + ")")
 }
 
-export function getHtml(splitId: string, recipients: SplitRecipient[]) {
+export function getWaterfallHtml(waterfallModuleId: string, token: string, tranches: WaterfallTranche[]) {
+    const displayTranches = tranches.slice(0, tranches.length === MAX_DISPLAY_RECIPIENTS ? MAX_DISPLAY_RECIPIENTS : MAX_DISPLAY_RECIPIENTS - 1)
+    const extraTextHtml = tranches.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-[#898989]"> + ${tranches.length - MAX_DISPLAY_RECIPIENTS - 1} more</div>` : ''
+
+    return `<!DOCTYPE html>
+<html>
+    <meta charset="utf-8">
+    <title>Waterfall Image</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        ${tailwindCss}
+        ${customCss}
+        ${getCss()}
+    </style>
+    <body>
+        <div class="h-full flex flex-col relative">
+            <div class="flex-grow py-40 px-40 flex items-center space-x-40">
+                <div class="w-2/5 relative">
+                    <canvas class="w-full h-full" id="chartDoughnut"></canvas>
+                    <div class="absolute inset-x-0 inset-y-0 flex items-center justify-center">
+                        ${drawSplitLogo(waterfallModuleId)}
+                    </div>
+                </div>
+                <div class="w-3/5 flex-grow flex flex-col h-full justify-center overflow-x-hidden space-y-16">
+                    <div>Token: ${token}</div>
+                    ${getTrancheRecipients(displayTranches)}
+                    ${extraTextHtml}
+                </div>
+            </div>
+        </div>
+    </body>
+</html>`;
+}
+
+function getTrancheRecipients(tranches: WaterfallTranche[]) {
+    let recipientDivs = ''
+
+    tranches.map((tranche) => {
+        const recipientHtml = getTrancheRecipientRow(tranche)
+        recipientDivs += recipientHtml
+    })
+
+    return recipientDivs
+}
+
+function getTrancheRecipientRow(tranche: WaterfallTranche) {
+    const manualEnsName = MANUAL_SPLIT_NAMING_MAP[tranche.recipientAddress]
+    const startAmount = tranche.startAmount
+    const endAmount = tranche.size ? tranche.startAmount + tranche.size : 'Res'
+    const name = tranche.recipientEnsName ?
+        shortenEns(tranche.recipientEnsName)
+        : manualEnsName ?
+            shortenEns(manualEnsName)
+            : shortenAddress(tranche.recipientAddress)
+
+    return `
+        <div class="text-[#222222] flex items-bottom justify-between space-x-4">
+            <div>${name}</div>
+            <div class="flex-grow border-b-8 mb-3 border-dotted border-gray-300"></div>
+            <div class="text-[#898989]">${startAmount} - ${endAmount}</div>
+        </div>
+    `
+}
+
+export function getSplitHtml(splitId: string, recipients: SplitRecipient[]) {
     const displayRecipients = recipients.slice(0, recipients.length === MAX_DISPLAY_RECIPIENTS ? MAX_DISPLAY_RECIPIENTS : MAX_DISPLAY_RECIPIENTS - 1)
     const extraTextHtml = recipients.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-[#898989]"> + ${recipients.length - MAX_DISPLAY_RECIPIENTS - 1} more</div>` : ''
 

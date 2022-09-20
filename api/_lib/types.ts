@@ -11,7 +11,7 @@ export interface ParsedRequest {
     widths: string[];
     heights: string[];
     chainId: number;
-    splitId: string;
+    accountId: string;
     viewportWidth: number;
     viewportHeight: number;
 }
