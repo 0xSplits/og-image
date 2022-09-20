@@ -28,7 +28,7 @@ function getHslColor(address: string, jump: number) {
     return ("hsla(" + hue + ", 88%, 56%, " + jumpedAlpha + ")")
 }
 
-export function getWaterfallHtml(waterfallModuleId: string, token: string, tranches: WaterfallTranche[]) {
+export function getWaterfallHtml(waterfallModuleId: string, tokenSymbol: string, tranches: WaterfallTranche[]) {
     const displayTranches = tranches.slice(0, tranches.length === MAX_DISPLAY_RECIPIENTS ? MAX_DISPLAY_RECIPIENTS : MAX_DISPLAY_RECIPIENTS - 1)
     const extraTextHtml = tranches.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-[#898989]"> + ${tranches.length - MAX_DISPLAY_RECIPIENTS - 1} more</div>` : ''
 
@@ -52,7 +52,7 @@ export function getWaterfallHtml(waterfallModuleId: string, token: string, tranc
                     </div>
                 </div>
                 <div class="w-3/5 flex-grow flex flex-col h-full justify-center overflow-x-hidden space-y-16">
-                    <div>Token: ${token}</div>
+                    <div>Token: ${tokenSymbol}</div>
                     ${getTrancheRecipients(displayTranches)}
                     ${extraTextHtml}
                 </div>

@@ -9,7 +9,13 @@ import { getSplitHtml, getWaterfallHtml } from './_lib/template';
 
 const isDev = !process.env.AWS_REGION;
 const isHtmlDebug = process.env.OG_HTML_DEBUG === '1';
-const ensProvider = new AlchemyProvider(undefined, process.env.ALCHEMY_API_KEY);
+
+const providerMap: { [key: number] : AlchemyProvider } = {
+    1: new AlchemyProvider(1, process.env.ALCHEMY_API_KEY),
+    5: new AlchemyProvider(5, process.env.GOERLI_ALCHEMY_API_KEY),
+    137: new AlchemyProvider(137, process.env.POLYGON_ALCHEMY_API_KEY),
+    80001: new AlchemyProvider(80001, process.env.MUMBAI_ALCHEMY_API_KEY),
+}
 
 const CACHE_TIME_IMMUTABLE_SEC = 60 * 60 * 24 * 7 // 1 week
 const CACHE_TIME_MUTABLE_SEC = 60 * 60 // 1 hour
@@ -20,7 +26,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         
         const splitsClient = new SplitsClient({
             chainId: parsedReq.chainId,
-            provider: ensProvider,
+            provider: providerMap[parsedReq.chainId],
+            ensProvider: providerMap[1],
             includeEnsNames: true,
         })
 
@@ -31,7 +38,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
             if (account.controller && account.controller !== AddressZero) cacheMaxAge = CACHE_TIME_MUTABLE_SEC
         }
         
-        const html = account.type === 'Split' ? getSplitHtml(account.id, account.recipients) : getWaterfallHtml(account.id, account.token, account.tranches)
+        const html = account.type === 'Split' ? getSplitHtml(account.id, account.recipients) : getWaterfallHtml(account.id, account.token.symbol, account.tranches)
         if (isHtmlDebug) {
             res.setHeader('Content-Type', 'text/html');
             res.end(html);
