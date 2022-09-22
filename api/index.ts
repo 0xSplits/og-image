@@ -13,8 +13,12 @@ const isHtmlDebug = process.env.OG_HTML_DEBUG === '1';
 const providerMap: { [key: number] : AlchemyProvider } = {
     1: new AlchemyProvider(1, process.env.ALCHEMY_API_KEY),
     5: new AlchemyProvider(5, process.env.GOERLI_ALCHEMY_API_KEY),
+    10: new AlchemyProvider(10, process.env.OPTIMISM_ALCHEMY_API_KEY),
     137: new AlchemyProvider(137, process.env.POLYGON_ALCHEMY_API_KEY),
+    420: new AlchemyProvider(420, process.env.OPT_GOERLI_ALCHEMY_API_KEY),
+    42161: new AlchemyProvider(42161, process.env.ARBITRUM_ALCHEMY_API_KEY),
     80001: new AlchemyProvider(80001, process.env.MUMBAI_ALCHEMY_API_KEY),
+    421613: new AlchemyProvider(421613, process.env.ARB_GOERLI_ALCHEMY_API_KEY),
 }
 
 const CACHE_TIME_IMMUTABLE_SEC = 60 * 60 * 24 * 7 // 1 week
