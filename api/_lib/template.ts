@@ -88,10 +88,10 @@ function getTrancheRecipientRow(tranche: WaterfallTranche, tokenSymbol: string, 
     return `
         <div class="flex flex-col relative">
             <div class="whitespace-nowrap flex flex-col items-center justify-center space-y-2" style="width: ${trancheWidth}; margin-left: ${trancheLeftOffset}">
-                <div class="w-full py-12 rounded-xl whitespace-nowrap flex flex-col items-center justify-center" style="background-color: ${trancheColor}">
+                <div class="w-full py-16 rounded-xl whitespace-nowrap flex flex-col items-center justify-center" style="background-color: ${trancheColor}">
                     <div class="text-[64px]">${trancheSize}${!isResidual ? ` ${symbol}` : ``}</div>
                 </div>
-                <div class="text-[#222222] text-[48px]">${name}</div>
+                <div class="text-[#222222] text-[56px]">${name}</div>
             </div>
         </div>
     `
