@@ -31,6 +31,10 @@ function getHslColor(address: string, jump: number) {
 export function getWaterfallHtml(waterfallModuleId: string, tokenSymbol: string, tranches: WaterfallTranche[]) {
     const displayTranches = tranches.slice(0, tranches.length === MAX_DISPLAY_RECIPIENTS ? MAX_DISPLAY_RECIPIENTS : MAX_DISPLAY_RECIPIENTS - 1)
     const extraTextHtml = tranches.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-[#898989]"> + ${tranches.length - MAX_DISPLAY_RECIPIENTS - 1} more</div>` : ''
+    const trancheSum = tranches.reduce((acc, tranche) => {
+        if (tranche.size) { return acc + tranche.size}
+        return acc
+    }, 0)
 
     return `<!DOCTYPE html>
 <html>
@@ -43,40 +47,38 @@ export function getWaterfallHtml(waterfallModuleId: string, tokenSymbol: string,
         ${getCss()}
     </style>
     <body>
-        <div class="h-full flex flex-col relative">
-            <div class="flex-grow py-40 px-40 flex items-center space-x-40">
-                <div class="w-2/5 relative">
-                    <canvas class="w-full h-full" id="chartDoughnut"></canvas>
-                    <div class="absolute inset-x-0 inset-y-0 flex items-center justify-center">
-                        ${drawSplitLogo(waterfallModuleId)}
-                    </div>
-                </div>
-                <div class="w-3/5 flex-grow flex flex-col h-full justify-center overflow-x-hidden space-y-16">
-                    <div>Token: ${tokenSymbol}</div>
-                    ${getTrancheRecipients(displayTranches)}
-                    ${extraTextHtml}
-                </div>
+        <div class="py-40 px-40 h-full">
+            <div class="absolute top-40 right-40">
+                ${drawSplitLogo(waterfallModuleId)}
+            </div>
+            <div class="w-full flex flex-col h-full justify-center -space-y-14">
+                ${getTrancheRecipients(displayTranches, tokenSymbol, trancheSum, waterfallModuleId)}
+                ${extraTextHtml}
             </div>
         </div>
     </body>
 </html>`;
 }
 
-function getTrancheRecipients(tranches: WaterfallTranche[]) {
+function getTrancheRecipients(tranches: WaterfallTranche[], tokenSymbol: string, trancheSum: number, waterfallModuleId: string) {
     let recipientDivs = ''
-
-    tranches.map((tranche) => {
-        const recipientHtml = getTrancheRecipientRow(tranche)
+    const jumpMultiplier = 100 / tranches.length
+    tranches.map((tranche, idx) => {
+        const trancheColor = getHslColor(waterfallModuleId, idx * jumpMultiplier)
+        const recipientHtml = getTrancheRecipientRow(tranche, tokenSymbol, trancheSum, trancheColor)
         recipientDivs += recipientHtml
     })
 
     return recipientDivs
 }
 
-function getTrancheRecipientRow(tranche: WaterfallTranche) {
+function getTrancheRecipientRow(tranche: WaterfallTranche, tokenSymbol: string, trancheSum: number, trancheColor: string) {
     const manualEnsName = MANUAL_SPLIT_NAMING_MAP[tranche.recipientAddress]
-    const startAmount = tranche.startAmount
-    const endAmount = tranche.size ? tranche.startAmount + tranche.size : 'Res'
+    const trancheLeftOffset = tranche.size ? `${tranche.startAmount / trancheSum * 85}%` : `85%`
+    const trancheWidth = tranche.size ? `${tranche.size / trancheSum * 85}%` : `15%`
+    const trancheSize = tranche.size ?? `Residual`
+    const isResidual = !tranche.size
+    const symbol = tokenSymbol
     const name = tranche.recipientEnsName ?
         shortenEns(tranche.recipientEnsName)
         : manualEnsName ?
@@ -84,10 +86,13 @@ function getTrancheRecipientRow(tranche: WaterfallTranche) {
             : shortenAddress(tranche.recipientAddress)
 
     return `
-        <div class="text-[#222222] flex items-bottom justify-between space-x-4">
-            <div>${name}</div>
-            <div class="flex-grow border-b-8 mb-3 border-dotted border-gray-300"></div>
-            <div class="text-[#898989]">${startAmount} - ${endAmount}</div>
+        <div class="flex flex-col relative">
+            <div class="whitespace-nowrap flex flex-col items-center justify-center space-y-2" style="width: ${trancheWidth}; margin-left: ${trancheLeftOffset}">
+                <div class="w-full py-12 rounded-xl whitespace-nowrap flex flex-col items-center justify-center" style="background-color: ${trancheColor}">
+                    <div class="text-[64px]">${trancheSize}${!isResidual ? ` ${symbol}` : ``}</div>
+                </div>
+                <div class="text-[#222222] text-[48px]">${name}</div>
+            </div>
         </div>
     `
 }
