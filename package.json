@@ -10,7 +10,7 @@
   "dependencies": {
     "@0xsplits/splits-sdk": "2.1.0-alpha.2",
     "chrome-aws-lambda": "7.0.0",
-    "ethers": "5.6.9",
+    "ethers": "5.7.1",
     "marked": "4.0.10",
     "puppeteer-core": "13.1.2",
     "twemoji": "13.0.1"
