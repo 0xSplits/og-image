@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@0xsplits/splits-sdk@2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@0xsplits/splits-sdk/-/splits-sdk-2.0.3.tgz#bd2231ce294bbae2ba2cf44424db4f0971c579b2"
-  integrity sha512-r2uxUt+VU/yw3TibTvQJnTBOWgGzZ/Bu51bGrXRWPEZGGYPxF4yxPJ1VZn7LsC+3hzKHh3ppSrMFwknOYdnEkQ==
+"@0xsplits/splits-sdk@2.1.0-alpha.2":
+  version "2.1.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/@0xsplits/splits-sdk/-/splits-sdk-2.1.0-alpha.2.tgz#fbc6953411bdeaf3cf379f6a11e4a110a10c886a"
+  integrity sha512-D55IgQLOGncI6VI4PN1F+AmWxc2UfihQxEfs1RgA3Pxdx0lrUgLpnvK1kkklAhnADZURzwwQYZzWs4LwZ5mu0g==
   dependencies:
     ethers "^5.6.9"
     graphql "^16.5.0"

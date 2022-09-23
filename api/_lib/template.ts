@@ -1,6 +1,6 @@
 
 import { readFileSync } from 'fs';
-import type { SplitRecipient } from '@0xsplits/splits-sdk';
+import type { SplitRecipient, WaterfallTranche } from '@0xsplits/splits-sdk';
 import { ethers } from 'ethers';
 
 import { MANUAL_SPLIT_NAMING_MAP, shortenAddress, shortenEns } from './utils';
@@ -28,7 +28,76 @@ function getHslColor(address: string, jump: number) {
     return ("hsla(" + hue + ", 88%, 56%, " + jumpedAlpha + ")")
 }
 
-export function getHtml(splitId: string, recipients: SplitRecipient[]) {
+export function getWaterfallHtml(waterfallModuleId: string, tokenSymbol: string, tranches: WaterfallTranche[]) {
+    const displayTranches = tranches.slice(0, tranches.length === MAX_DISPLAY_RECIPIENTS ? MAX_DISPLAY_RECIPIENTS : MAX_DISPLAY_RECIPIENTS - 1)
+    const extraTextHtml = tranches.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-[#898989]"> + ${tranches.length - MAX_DISPLAY_RECIPIENTS - 1} more</div>` : ''
+    const trancheSum = tranches.reduce((acc, tranche) => {
+        if (tranche.size) { return acc + tranche.size}
+        return acc
+    }, 0)
+
+    return `<!DOCTYPE html>
+<html>
+    <meta charset="utf-8">
+    <title>Waterfall Image</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        ${tailwindCss}
+        ${customCss}
+        ${getCss()}
+    </style>
+    <body>
+        <div class="py-40 px-40 h-full">
+            <div class="absolute top-40 right-40">
+                ${drawSplitLogo(waterfallModuleId)}
+            </div>
+            <div class="w-full flex flex-col h-full justify-center -space-y-14">
+                ${getTrancheRecipients(displayTranches, tokenSymbol, trancheSum, waterfallModuleId)}
+                ${extraTextHtml}
+            </div>
+        </div>
+    </body>
+</html>`;
+}
+
+function getTrancheRecipients(tranches: WaterfallTranche[], tokenSymbol: string, trancheSum: number, waterfallModuleId: string) {
+    let recipientDivs = ''
+    const jumpMultiplier = 100 / tranches.length
+    tranches.map((tranche, idx) => {
+        const trancheColor = getHslColor(waterfallModuleId, idx * jumpMultiplier)
+        const recipientHtml = getTrancheRecipientRow(tranche, tokenSymbol, trancheSum, trancheColor)
+        recipientDivs += recipientHtml
+    })
+
+    return recipientDivs
+}
+
+function getTrancheRecipientRow(tranche: WaterfallTranche, tokenSymbol: string, trancheSum: number, trancheColor: string) {
+    const manualEnsName = MANUAL_SPLIT_NAMING_MAP[tranche.recipientAddress]
+    const trancheLeftOffset = tranche.size ? `${tranche.startAmount / trancheSum * 85}%` : `85%`
+    const trancheWidth = tranche.size ? `${tranche.size / trancheSum * 85}%` : `15%`
+    const trancheSize = tranche.size ?? `Residual`
+    const isResidual = !tranche.size
+    const symbol = tokenSymbol
+    const name = tranche.recipientEnsName ?
+        shortenEns(tranche.recipientEnsName)
+        : manualEnsName ?
+            shortenEns(manualEnsName)
+            : shortenAddress(tranche.recipientAddress)
+
+    return `
+        <div class="flex flex-col relative">
+            <div class="whitespace-nowrap flex flex-col items-center justify-center space-y-2" style="width: ${trancheWidth}; margin-left: ${trancheLeftOffset}">
+                <div class="w-full py-16 rounded-xl whitespace-nowrap flex flex-col items-center justify-center" style="background-color: ${trancheColor}">
+                    <div class="text-[64px]">${trancheSize}${!isResidual ? ` ${symbol}` : ``}</div>
+                </div>
+                <div class="text-[#222222] text-[56px]">${name}</div>
+            </div>
+        </div>
+    `
+}
+
+export function getSplitHtml(splitId: string, recipients: SplitRecipient[]) {
     const displayRecipients = recipients.slice(0, recipients.length === MAX_DISPLAY_RECIPIENTS ? MAX_DISPLAY_RECIPIENTS : MAX_DISPLAY_RECIPIENTS - 1)
     const extraTextHtml = recipients.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-[#898989]"> + ${recipients.length - MAX_DISPLAY_RECIPIENTS - 1} more</div>` : ''
 

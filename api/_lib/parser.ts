@@ -14,8 +14,8 @@ export function parseRequest(req: IncomingMessage) {
         throw new Error('Expected a single height and width')
     }
     
-    const splitId = (pathname || '/').slice(1);
-    if (!splitId) {
+    const accountId = (pathname || '/').slice(1);
+    if (!accountId) {
         throw new Error('Split id required')
     }
 
@@ -31,7 +31,7 @@ export function parseRequest(req: IncomingMessage) {
         widths: [],
         heights: [],
         chainId: chainId ? parseInt(chainId) : 1,
-        splitId,
+        accountId,
         viewportWidth: viewportWidth ? parseInt(viewportWidth) : 2400,
         viewportHeight: viewportHeight ? parseInt(viewportHeight) : 1254,
     };
