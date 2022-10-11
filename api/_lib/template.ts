@@ -51,7 +51,7 @@ export function getWaterfallHtml(waterfallModuleId: string, tokenSymbol: string,
             <div class="absolute top-40 right-40">
                 ${drawSplitLogo(waterfallModuleId)}
             </div>
-            <div class="w-full flex flex-col h-full justify-center -space-y-14">
+            <div class="w-full flex flex-col h-full justify-end -space-y-14">
                 ${getTrancheRecipients(displayTranches, tokenSymbol, trancheSum, waterfallModuleId)}
                 ${extraTextHtml}
             </div>
