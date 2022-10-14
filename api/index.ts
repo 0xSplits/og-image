@@ -5,7 +5,7 @@ import { AlchemyProvider } from '@ethersproject/providers';
 
 import { parseRequest } from './_lib/parser';
 import { getScreenshot } from './_lib/chromium';
-import { getSplitHtml, getWaterfallHtml } from './_lib/template';
+import { getGenericHtml, getSplitHtml, getWaterfallHtml } from './_lib/template';
 
 const isDev = !process.env.AWS_REGION;
 const isHtmlDebug = process.env.OG_HTML_DEBUG === '1';
@@ -36,13 +36,17 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         })
 
         const account = await splitsClient.getAccountMetadata({ accountId: parsedReq.accountId })
-        if (!account) throw new Error('Account not found');
+
         let cacheMaxAge = CACHE_TIME_IMMUTABLE_SEC
-        if (account.type === 'Split') {
+        if (account?.type === 'Split') {
             if (account.controller && account.controller !== AddressZero) cacheMaxAge = CACHE_TIME_MUTABLE_SEC
         }
         
-        const html = account.type === 'Split' ? getSplitHtml(account.id, account.recipients) : getWaterfallHtml(account.id, account.token.symbol, account.tranches)
+        const html = account?.type === 'Split' ?
+            getSplitHtml(account.id, account.recipients) :
+            account?.type === 'WaterfallModule' ?
+            getWaterfallHtml(account.id, account.token.symbol, account.tranches) :
+            getGenericHtml(parsedReq.accountId)
         if (isHtmlDebug) {
             res.setHeader('Content-Type', 'text/html');
             res.end(html);
