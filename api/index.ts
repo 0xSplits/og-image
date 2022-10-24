@@ -23,6 +23,7 @@ const providerMap: { [key: number] : AlchemyProvider } = {
 
 const CACHE_TIME_IMMUTABLE_SEC = 60 * 60 * 24 * 7 // 1 week
 const CACHE_TIME_MUTABLE_SEC = 60 * 60 // 1 hour
+const CACHE_TIME_LIQUID_SPLIT = 60 * 60 // 1 hour
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
     try {
@@ -40,10 +41,14 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         let cacheMaxAge = CACHE_TIME_IMMUTABLE_SEC
         if (account?.type === 'Split') {
             if (account.controller && account.controller !== AddressZero) cacheMaxAge = CACHE_TIME_MUTABLE_SEC
+        } else if (account?.type === 'LiquidSplit') {
+            cacheMaxAge = CACHE_TIME_LIQUID_SPLIT
         }
         
         const html = account?.type === 'Split' ?
             getSplitHtml(account.id, account.recipients) :
+            account?.type === 'LiquidSplit' ?
+            getSplitHtml(account.id, account.holders) :
             account?.type === 'WaterfallModule' ?
             getWaterfallHtml(account.id, account.token.symbol, account.tranches) :
             getGenericHtml(parsedReq.accountId)
