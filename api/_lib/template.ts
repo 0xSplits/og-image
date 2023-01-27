@@ -28,7 +28,7 @@ function getHslColor(address: string, jump: number) {
     return ("hsla(" + hue + ", 88%, 56%, " + jumpedAlpha + ")")
 }
 
-export function getWaterfallHtml(waterfallModuleId: string, tokenSymbol: string, tranches: WaterfallTranche[]) {
+export function getWaterfallHtml(chainId: number, waterfallModuleId: string, tokenSymbol: string, tranches: WaterfallTranche[]) {
     const displayTranches = tranches.slice(0, tranches.length === MAX_DISPLAY_RECIPIENTS ? MAX_DISPLAY_RECIPIENTS : MAX_DISPLAY_RECIPIENTS - 1)
     const extraTextHtml = tranches.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-[#898989]"> + ${tranches.length - MAX_DISPLAY_RECIPIENTS - 1} more</div>` : ''
     const trancheSum = tranches.reduce((acc, tranche) => {
@@ -52,7 +52,7 @@ export function getWaterfallHtml(waterfallModuleId: string, tokenSymbol: string,
                 ${drawSplitLogo(waterfallModuleId, 'w-72 h-72')}
             </div>
             <div class="w-full flex flex-col h-full justify-end -space-y-14">
-                ${getTrancheRecipients(displayTranches, tokenSymbol, trancheSum, waterfallModuleId)}
+                ${getTrancheRecipients(chainId, displayTranches, tokenSymbol, trancheSum, waterfallModuleId)}
                 ${extraTextHtml}
             </div>
         </div>
@@ -60,20 +60,20 @@ export function getWaterfallHtml(waterfallModuleId: string, tokenSymbol: string,
 </html>`;
 }
 
-function getTrancheRecipients(tranches: WaterfallTranche[], tokenSymbol: string, trancheSum: number, waterfallModuleId: string) {
+function getTrancheRecipients(chainId: number, tranches: WaterfallTranche[], tokenSymbol: string, trancheSum: number, waterfallModuleId: string) {
     let recipientDivs = ''
     const jumpMultiplier = 100 / tranches.length
     tranches.map((tranche, idx) => {
         const trancheColor = getHslColor(waterfallModuleId, idx * jumpMultiplier)
-        const recipientHtml = getTrancheRecipientRow(tranche, tokenSymbol, trancheSum, trancheColor)
+        const recipientHtml = getTrancheRecipientRow(chainId, tranche, tokenSymbol, trancheSum, trancheColor)
         recipientDivs += recipientHtml
     })
 
     return recipientDivs
 }
 
-function getTrancheRecipientRow(tranche: WaterfallTranche, tokenSymbol: string, trancheSum: number, trancheColor: string) {
-    const manualEnsName = MANUAL_SPLIT_NAMING_MAP[tranche.recipientAddress]
+function getTrancheRecipientRow(chainId: number, tranche: WaterfallTranche, tokenSymbol: string, trancheSum: number, trancheColor: string) {
+    const manualEnsName = MANUAL_SPLIT_NAMING_MAP[chainId][tranche.recipientAddress]
     const trancheLeftOffset = tranche.size ? `${tranche.startAmount / trancheSum * 85}%` : `85%`
     const trancheWidth = tranche.size ? `${tranche.size / trancheSum * 85}%` : `15%`
     const trancheSize = tranche.size ?? `Residual`
@@ -97,7 +97,7 @@ function getTrancheRecipientRow(tranche: WaterfallTranche, tokenSymbol: string, 
     `
 }
 
-export function getSplitHtml(splitId: string, recipients: SplitRecipient[]) {
+export function getSplitHtml(chainId: number, splitId: string, recipients: SplitRecipient[]) {
     const displayRecipients = recipients.slice(0, recipients.length === MAX_DISPLAY_RECIPIENTS ? MAX_DISPLAY_RECIPIENTS : MAX_DISPLAY_RECIPIENTS - 1)
     const extraTextHtml = recipients.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-[#898989]"> + ${recipients.length - MAX_DISPLAY_RECIPIENTS - 1} more</div>` : ''
 
@@ -126,7 +126,7 @@ export function getSplitHtml(splitId: string, recipients: SplitRecipient[]) {
                     </div>
                 </div>
                 <div class="w-3/5 flex-grow flex flex-col h-full justify-center overflow-x-hidden space-y-16">
-                    ${getRecipients(displayRecipients)}
+                    ${getRecipients(chainId, displayRecipients)}
                     ${extraTextHtml}
                 </div>
             </div>
@@ -164,19 +164,19 @@ export function getSplitHtml(splitId: string, recipients: SplitRecipient[]) {
 </html>`;
 }
 
-function getRecipients(recipients: SplitRecipient[]) {
+function getRecipients(chainId: number, recipients: SplitRecipient[]) {
     let recipientDivs = ''
 
     recipients.map((recipient) => {
-        const recipientHtml = getRecipientRow(recipient)
+        const recipientHtml = getRecipientRow(chainId, recipient)
         recipientDivs += recipientHtml
     })
 
     return recipientDivs
 }
 
-function getRecipientRow(recipient: SplitRecipient) {
-    const manualEnsName = MANUAL_SPLIT_NAMING_MAP[recipient.address]
+function getRecipientRow(chainId: number, recipient: SplitRecipient) {
+    const manualEnsName = MANUAL_SPLIT_NAMING_MAP[chainId][recipient.address]
     const name = recipient.ensName ?
         shortenEns(recipient.ensName)
         : manualEnsName ?

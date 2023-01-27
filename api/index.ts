@@ -46,11 +46,11 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         }
         
         const html = account?.type === 'Split' ?
-            getSplitHtml(account.id, account.recipients) :
+            getSplitHtml(parsedReq.chainId, account.id, account.recipients) :
             account?.type === 'LiquidSplit' ?
-            getSplitHtml(account.id, account.holders) :
+            getSplitHtml(parsedReq.chainId, account.id, account.holders) :
             account?.type === 'WaterfallModule' ?
-            getWaterfallHtml(account.id, account.token.symbol, account.tranches) :
+            getWaterfallHtml(parsedReq.chainId, account.id, account.token.symbol, account.tranches) :
             getGenericHtml(parsedReq.accountId)
         if (isHtmlDebug) {
             res.setHeader('Content-Type', 'text/html');
