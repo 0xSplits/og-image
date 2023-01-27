@@ -73,7 +73,7 @@ function getTrancheRecipients(chainId: number, tranches: WaterfallTranche[], tok
 }
 
 function getTrancheRecipientRow(chainId: number, tranche: WaterfallTranche, tokenSymbol: string, trancheSum: number, trancheColor: string) {
-    const manualEnsName = MANUAL_SPLIT_NAMING_MAP[chainId][tranche.recipientAddress]
+    const manualEnsName = MANUAL_SPLIT_NAMING_MAP[chainId]?.[tranche.recipientAddress]
     const trancheLeftOffset = tranche.size ? `${tranche.startAmount / trancheSum * 85}%` : `85%`
     const trancheWidth = tranche.size ? `${tranche.size / trancheSum * 85}%` : `15%`
     const trancheSize = tranche.size ?? `Residual`
@@ -176,7 +176,7 @@ function getRecipients(chainId: number, recipients: SplitRecipient[]) {
 }
 
 function getRecipientRow(chainId: number, recipient: SplitRecipient) {
-    const manualEnsName = MANUAL_SPLIT_NAMING_MAP[chainId][recipient.address]
+    const manualEnsName = MANUAL_SPLIT_NAMING_MAP[chainId]?.[recipient.address]
     const name = recipient.ensName ?
         shortenEns(recipient.ensName)
         : manualEnsName ?
