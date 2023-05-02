@@ -107,7 +107,8 @@ export function getSplitHtml(chainId: number, splitId: string, recipients: Split
     const jumpMultiplier = 100 / doughnutData.length
     const doughnutColors = recipients.slice(0, MAX_DISPLAY_RECIPIENTS + MAX_EXTRA_DATA_POINTS).map((_recipient, index) => "'"  + getHslColor(splitId, index * jumpMultiplier) + "'")
     
-    const isSponsor = recipients.find(r => r.address === SPLITS_DONATIONS_ADDRESS)
+    const sponsorRecipient = recipients.find(r => r.address === SPLITS_DONATIONS_ADDRESS)
+    const isSponsor = sponsorRecipient && sponsorRecipient.percentAllocation >= 1
 
     return `<!DOCTYPE html>
 <html>
