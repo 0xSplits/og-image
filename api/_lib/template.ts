@@ -97,6 +97,8 @@ function getTrancheRecipientRow(chainId: number, tranche: WaterfallTranche, toke
     `
 }
 
+const SPLITS_DONATIONS_ADDRESS = "0xF8843981e7846945960f53243cA2Fd42a579f719"
+
 export function getSplitHtml(chainId: number, splitId: string, recipients: SplitRecipient[]) {
     const displayRecipients = recipients.slice(0, recipients.length === MAX_DISPLAY_RECIPIENTS ? MAX_DISPLAY_RECIPIENTS : MAX_DISPLAY_RECIPIENTS - 1)
     const extraTextHtml = recipients.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-[#898989]"> + ${recipients.length - MAX_DISPLAY_RECIPIENTS - 1} more</div>` : ''
@@ -104,7 +106,8 @@ export function getSplitHtml(chainId: number, splitId: string, recipients: Split
     const doughnutData = recipients.slice(0, MAX_DISPLAY_RECIPIENTS + MAX_EXTRA_DATA_POINTS).map((recipient) => recipient.percentAllocation * 100)
     const jumpMultiplier = 100 / doughnutData.length
     const doughnutColors = recipients.slice(0, MAX_DISPLAY_RECIPIENTS + MAX_EXTRA_DATA_POINTS).map((_recipient, index) => "'"  + getHslColor(splitId, index * jumpMultiplier) + "'")
-
+    
+    const isSponsor = recipients.find(r => r.address === SPLITS_DONATIONS_ADDRESS)
 
     return `<!DOCTYPE html>
 <html>
@@ -118,6 +121,12 @@ export function getSplitHtml(chainId: number, splitId: string, recipients: Split
     </style>
     <body>
         <div class="h-full flex flex-col relative">
+            ${
+                isSponsor ? 
+                `<div class="self-end mr-20 mt-20">
+                    <span class="bg-orange-500 text-white p-8">SPLITS SPONSOR</span>
+                </div>` : ""
+            }
             <div class="flex-grow py-40 px-40 flex items-center space-x-40">
                 <div class="w-2/5 relative">
                     <canvas class="w-full h-full" id="chartDoughnut"></canvas>
