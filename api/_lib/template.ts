@@ -3,7 +3,7 @@ import { readFileSync } from 'fs';
 import type { SplitRecipient, WaterfallTranche } from '@0xsplits/splits-sdk';
 import { ethers } from 'ethers';
 
-import { MANUAL_SPLIT_NAMING_MAP, shortenAddress, shortenEns } from './utils';
+import { MANUAL_SPLIT_NAMING_MAP, isSplitSponsor, shortenAddress, shortenEns } from './utils';
 
 const customCss = readFileSync(`${__dirname}/../_stylesheets/custom.css`).toString();
 const tailwindCss = readFileSync(`${__dirname}/../_stylesheets/style.css`).toString();
@@ -97,8 +97,6 @@ function getTrancheRecipientRow(chainId: number, tranche: WaterfallTranche, toke
     `
 }
 
-const SPLITS_DONATIONS_ADDRESS = "0xF8843981e7846945960f53243cA2Fd42a579f719"
-
 export function getSplitHtml(chainId: number, splitId: string, recipients: SplitRecipient[]) {
     const displayRecipients = recipients.slice(0, recipients.length === MAX_DISPLAY_RECIPIENTS ? MAX_DISPLAY_RECIPIENTS : MAX_DISPLAY_RECIPIENTS - 1)
     const extraTextHtml = recipients.length > MAX_DISPLAY_RECIPIENTS ? `<div class="text-[#898989]"> + ${recipients.length - MAX_DISPLAY_RECIPIENTS - 1} more</div>` : ''
@@ -107,8 +105,7 @@ export function getSplitHtml(chainId: number, splitId: string, recipients: Split
     const jumpMultiplier = 100 / doughnutData.length
     const doughnutColors = recipients.slice(0, MAX_DISPLAY_RECIPIENTS + MAX_EXTRA_DATA_POINTS).map((_recipient, index) => "'"  + getHslColor(splitId, index * jumpMultiplier) + "'")
     
-    const sponsorRecipient = recipients.find(r => r.address === SPLITS_DONATIONS_ADDRESS)
-    const isSponsor = sponsorRecipient && sponsorRecipient.percentAllocation >= 1
+    const isSponsor = isSplitSponsor(recipients)
 
     return `<!DOCTYPE html>
 <html>
