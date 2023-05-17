@@ -1,3 +1,5 @@
+import { SplitRecipient } from "@0xsplits/splits-sdk"
+
 const MAX_ENS_LENGTH = 24
 
 export const shortenAddress = (address: string): string => {
@@ -21,4 +23,24 @@ export const MANUAL_SPLIT_NAMING_MAP: { [chainId: number]: { [key: string]: stri
     '0x0D29C0A1d81707c196A064492F575A84015a41d5': 'hydra.clients.quantum.tech',
     '0x047ED5b8E8a7eDBd92FAF61f3117cAFE8c529ABb': 'headlesschaos.eth',
   },
+}
+
+const SPLITS_DONATION_ADDRESS = // donations.0xsplits.eth
+  '0xF8843981e7846945960f53243cA2Fd42a579f719'
+const SPLITS_ADDRESS = '0xEc8Bfc8637247cEe680444BA1E25fA5e151Ba342' // 0xsplits.eth
+
+const SPONSORSHIP_THRESHOLD = 0.1
+
+const getSplitSponsorshipPercentage = (recipients: SplitRecipient[]) => {
+  return recipients.filter(r => 
+      r.address === SPLITS_ADDRESS || r.address === SPLITS_DONATION_ADDRESS
+    ).reduce((acc, r) => {
+      return (acc + r.percentAllocation)
+  }, 0)
+}
+
+export const isSplitSponsor: (recipients: SplitRecipient[]) => boolean = (
+  split,
+) => {
+  return getSplitSponsorshipPercentage(split) > SPONSORSHIP_THRESHOLD
 }
