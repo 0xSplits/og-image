@@ -124,9 +124,7 @@ export function getSplitHtml(chainId: number, splitId: string, recipients: Split
         <div class="h-full flex flex-col relative">
             ${
                 isSponsor ? 
-                `<div class="self-end mr-20 mt-20">
-                    <span class="bg-orange-500 text-white p-8">SPLITS SPONSOR</span>
-                </div>` : ""
+                `<div class="absolute inset-x-0 text-center text-black text-[68px] tracking-wider py-8 overflow-hidden" style="background-color:${getHslColor(splitId,0)}">OFFICIAL SPLITS SPONSOR</div>` : ""
             }
             <div class="flex-grow py-40 px-40 flex items-center space-x-40">
                 <div class="w-2/5 relative">
