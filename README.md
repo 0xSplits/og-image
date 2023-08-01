@@ -1,12 +1,18 @@
 # 0xSplits Open Graph Images
 
 ## Local dev
+Make sure to have node installed, currently we're using 18. Can find the installation
+[here](https://nodejs.org/en/download/). A node version manager can also
+be useful, you can read more about it [here](https://github.com/nvm-sh/nvm).
+
 To setup local development, clone down the repo and run:
 ```bash
 yarn install
 npm install -g vercel
 vercel dev
 ```
+
+If the vercel installation fails, may need to run it with `sudo` in front.
 
 Create a .env.local file and fill it in with the appropriate values.
 
