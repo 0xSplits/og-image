@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@0xsplits/splits-sdk@2.12.0":
-  version "2.12.0"
-  resolved "https://registry.yarnpkg.com/@0xsplits/splits-sdk/-/splits-sdk-2.12.0.tgz#906fad644e97ef3fbd58de274a1c65090632bbb3"
-  integrity sha512-Nq3qBEqLdDOaU1G+WiCJUxgU6qa2ANZ9JsZpLTSZDKPR8mOvcrMfOtWK6W7n0qAGc7wiYIUhHMjfjcZJR+CF/g==
+"@0xsplits/splits-sdk@2.13.0-alpha.0":
+  version "2.13.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@0xsplits/splits-sdk/-/splits-sdk-2.13.0-alpha.0.tgz#81b8f56f6c3704b67fd7078b3c1cbd843f92c585"
+  integrity sha512-XX+PhRnzTHwpG67xkiHs/Ri085oy+H3GqYZLGc0QKPh3ogGmPoHF09MsaUuMkXOfHv8KhftgOQdyP006nU6mzw==
   dependencies:
     abi-coder "^4.1.1"
     base-64 "^1.0.0"

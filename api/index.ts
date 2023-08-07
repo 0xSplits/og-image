@@ -24,6 +24,8 @@ const providerMap: { [chain: number]: JsonRpcProvider } = {
     100: new JsonRpcProvider(`https://proud-cold-slug.xdai.quiknode.pro/${process.env.GNOSIS_QUICKNODE_API_KEY}/`, 100),
     250: new JsonRpcProvider(`https://distinguished-light-scion.fantom.quiknode.pro/${process.env.FANTOM_QUICKNODE_API_KEY}/`, 250),
     43114: new JsonRpcProvider(`https://divine-convincing-lambo.avalanche-mainnet.quiknode.pro/${process.env.AVALANCHE_QUICKNODE_API_KEY}/ext/bc/C/rpc`, 43114),
+    8453: new JsonRpcProvider(`https://holy-sly-moon.base-mainnet.quiknode.pro/${process.env.BASE_QUICKNODE_API_KEY}/`, 8453),
+    
     1313161554: new JsonRpcProvider(`https://aurora-mainnet.infura.io/v3/${process.env.AURORA_INFURA_API_KEY}`, 1313161554),
 
     7777777: new JsonRpcProvider('https://rpc.zora.energy/', 7777777),
